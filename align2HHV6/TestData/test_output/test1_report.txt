@@ -1,0 +1,2 @@
+subtype=U1102 cov=0.93517 dp=16.6099 cov_dr=0.663865 dp_dr=14.2137 cov_u=0.899675 dp_u=15.8499 n_var=7573 file=HHV6_icgc/test1.U1102.bam
+subtype=Z29 cov=0.992631 dp=18.0456 cov_dr=0.952235 dp_dr=19.4749 cov_u=0.937207 dp_u=16.9226 n_var=937 file=HHV6_icgc/test1.Z29.bam
