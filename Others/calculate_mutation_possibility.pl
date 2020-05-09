@@ -2,16 +2,28 @@
 use strict;
 use 5.010;
 
-# usage
-# calculate the expected missense/synonymous/non-sense mutation frequency 
+# Purpose
+# calculate the expected missense/synonymous/non-sense mutation ratio 
+
+# output (without mutation req weight)
 # perl calculate_mutation_possibility.pl | grep mis | awk '{sum1 += $8; sum2 += $9} END {print sum1, sum2}'
 # perl calculate_mutation_possibility.pl | grep syn | awk '{sum1 += $8; sum2 += $9} END {print sum1, sum2}'
 # perl calculate_mutation_possibility.pl | grep non | awk '{sum1 += $8; sum2 += $9} END {print sum1, sum2}'
-
-# output
 # 6544.3 6560.52 (missense)
 # 2058.9 2046.5 (synonymous)
 # 368 378.67 (non sense)
+# dN/dS = 6544.3/2058.9 = 3.18
+# dS/dLoF = 2058.9/368 = 5.59
+
+# output (with mutatioon freq weight)
+# perl calculate_mutation_possibility.pl | grep mis | awk '{sum1 += $11; sum2 += $12} END {print sum1, sum2}'
+# perl calculate_mutation_possibility.pl | grep syn | awk '{sum1 += $11; sum2 += $12} END {print sum1, sum2}'
+# perl calculate_mutation_possibility.pl | grep non | awk '{sum1 += $11; sum2 += $12} END {print sum1, sum2}'
+# 100176 100336 (missense)
+# 44449.3 43890.6 (synonymous)
+# 5891.38 5993.17 (non sense)
+# dN/dS = 100176/44449.3 = 2.25
+# dS/dLoF = 44449.3/5891 = 7.55
 
 my %codon2aa = qw(
   TCA  S  TCC  S  TCG  S  TCT  S  TTC  F  TTT  F  TTA  L  TTG  L
@@ -67,6 +79,27 @@ GTA	 7.71		GCA	17.09		GAA	33.85		GGA	17.19
 GTG	25.75		GCG	 5.94		GAG	39.40		GGG	15.26
 );
 
+# Human germline mutation rate obtained from Table 1 of 
+# Lindsay, S.J., Rahbari, R., Kaplanis, J. et al. 
+# Similarities and differences in patterns of germline mutation between mice and humans. 
+# Nat Commun 10, 4053 (2019). https://doi.org/10.1038/s41467-019-12023-w
+
+my %codonfreq = qw(
+    AC	5.87
+    AT	9.68
+    AG	27.5
+    CA	9.78
+    CT	41.21
+    CG	5.97
+    TA	9.68
+    TC	27.5
+    TG	5.87
+    GA	41.21
+    GC	5.97
+    GT	9.78
+);
+
+
 my @dnas = qw(A C T G);
 
 foreach my $codon (keys %codon2aa){
@@ -80,6 +113,13 @@ foreach my $codon (keys %codon2aa){
             substr($codon_mut, $i, 1, $dna);
             next if $codon eq $codon_mut;
             my $aa_mut = $codon2aa{$codon_mut};
+
+            my $tvti = substr($codon, $i, 1).substr($codon_mut, $i, 1);
+            my $tvti_freq = $codonfreq{$tvti};
+
+            my $aafreq1_wight = $aafreq1 * $tvti_freq;
+            my $aafreq2_wight = $aafreq2 * $tvti_freq;
+
             my $mut_type;
             if ($aa eq "*"){
                 $mut_type = "-"
@@ -96,7 +136,7 @@ foreach my $codon (keys %codon2aa){
             ){
                 $mut_type = "non"
             }
-            say "$codon $aa $pos $dna $codon_mut $aa_mut $mut_type $aafreq1 $aafreq2";
+            say "$codon $aa $pos $dna $codon_mut $aa_mut $tvti $mut_type $aafreq1 $aafreq2 $aafreq1_wight $aafreq2_wight";
         }
     }
 }

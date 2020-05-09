@@ -33,6 +33,8 @@ Example 2: run alignment to HHV6 genome with unmapped pair-end fastq files
 `align2hhv6_unmap_fq_pe TestData/test2_unmap_1.fastq TestData/test2_unmap_2.fastq test2 > test2_report.txt`
 
 output in test1_report.txt 
+
+```text
 subtype=U1102 cov=0.741506 dp=1.5476 cov_dr=0.512301 dp_dr=1.2763 cov_u=0.714115 dp_u=1.47936 n_var=5091 file=HHV6/test2.U1102.bam
 subtype=Z29 cov=0.796835 dp=1.69786 cov_dr=0.768793 dp_dr=2.05448 cov_u=0.752632 dp_u=1.57974 n_var=658 file=HHV6/test2.Z29.bam
-
+```
