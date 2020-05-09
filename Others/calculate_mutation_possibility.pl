@@ -5,10 +5,10 @@ use 5.010;
 # Purpose
 # calculate the expected missense/synonymous/non-sense mutation ratio 
 
-# output (without mutation req weight)
-# perl calculate_mutation_possibility.pl | grep mis | awk '{sum1 += $8; sum2 += $9} END {print sum1, sum2}'
-# perl calculate_mutation_possibility.pl | grep syn | awk '{sum1 += $8; sum2 += $9} END {print sum1, sum2}'
-# perl calculate_mutation_possibility.pl | grep non | awk '{sum1 += $8; sum2 += $9} END {print sum1, sum2}'
+# output (without mutation freq weight)
+# perl calculate_mutation_possibility.pl | grep mis | awk '{sum1 += $9; sum2 += $10} END {print sum1, sum2}'
+# perl calculate_mutation_possibility.pl | grep syn | awk '{sum1 += $9; sum2 += $10} END {print sum1, sum2}'
+# perl calculate_mutation_possibility.pl | grep non | awk '{sum1 += $9; sum2 += $10} END {print sum1, sum2}'
 # 6544.3 6560.52 (missense)
 # 2058.9 2046.5 (synonymous)
 # 368 378.67 (non sense)
@@ -38,7 +38,6 @@ my %codon2aa = qw(
 
 # Frequency of codon usage obtained from 
 # https://www.kazusa.or.jp/codon/cgi-bin/showcodon.cgi?species=9606
-
 my %codon2usage = qw(
 TTT 17.6  TCT 15.2  TAT 12.2  TGT 10.6
 TTC 20.3  TCC 17.7  TAC 15.3  TGC 12.6
@@ -83,7 +82,6 @@ GTG	25.75		GCG	 5.94		GAG	39.40		GGG	15.26
 # Lindsay, S.J., Rahbari, R., Kaplanis, J. et al. 
 # Similarities and differences in patterns of germline mutation between mice and humans. 
 # Nat Commun 10, 4053 (2019). https://doi.org/10.1038/s41467-019-12023-w
-
 my %codonfreq = qw(
     AC	5.87
     AT	9.68
@@ -98,7 +96,6 @@ my %codonfreq = qw(
     GC	5.97
     GT	9.78
 );
-
 
 my @dnas = qw(A C T G);
 
