@@ -25,6 +25,12 @@ use 5.010;
 # dN/dS = 100176/44449.3 = 2.25
 # dS/dLoF = 44449.3/5891 = 7.55
 
+
+# 99517.3 99324.5 (missense)
+# 46846.6 45207.1 (synonymous)
+# 6801.97 6884.69 (non sense)
+# 99517/46846
+# 46846.6/6801
 my %codon2aa = qw(
   TCA  S  TCC  S  TCG  S  TCT  S  TTC  F  TTT  F  TTA  L  TTG  L
   TAC  Y  TAT  Y  TAA  *  TAG  *  TGC  C  TGT  C  TGA  *  TGG  W
@@ -79,9 +85,8 @@ GTG	25.75		GCG	 5.94		GAG	39.40		GGG	15.26
 );
 
 # Human germline mutation rate obtained from Table 1 of 
-# Lindsay, S.J., Rahbari, R., Kaplanis, J. et al. 
-# Similarities and differences in patterns of germline mutation between mice and humans. 
-# Nat Commun 10, 4053 (2019). https://doi.org/10.1038/s41467-019-12023-w
+# Milholland, Brandon, et al. "Differences between germline and somatic mutation rates in humans and mice." 
+# Nature communications 8.1 (2017): 1-8.
 my %codonfreq = qw(
     AC	5.87
     AT	9.68
@@ -96,6 +101,22 @@ my %codonfreq = qw(
     GC	5.97
     GT	9.78
 );
+
+# my %codonfreq = qw(
+#     AC	3.97
+#     AT	3.02
+#     AG	17.30
+#     CA	16.13
+#     CT	51.47
+#     CG	8.12
+#     TA	3.02
+#     TC	17.30
+#     TG	3.97
+#     GA	51.47
+#     GC	8.12
+#     GT	16.13
+# );
+
 
 my @dnas = qw(A C T G);
 
