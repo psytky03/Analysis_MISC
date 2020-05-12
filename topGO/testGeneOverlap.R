@@ -2,10 +2,10 @@
 # a function for simple hypergeometric enrichement test
 # inputs are vector of observed IDs, reference pathway IDs, and universe IDs.
 # return df with p.value and odd.ratio
+# test direction can be "greater" or "less"
 testGeneOverlap <- function(observedIDs, pathwayIDs, universeIDs, side = "greater"){
   obs_size <- length(observedIDs)
   pat_size <- length(pathwayIDs)
-  side <- "less"
   obs_pat_size <- length(base::union(observedIDs, pathwayIDs))
   univ_size <- length(universeIDs)
   shared_size <- length(base::intersect(observedIDs, pathwayIDs))
