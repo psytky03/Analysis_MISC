@@ -1,0 +1,73 @@
+#!/usr/bin/Rscript
+## Script converts BEAGLE output files (*.bgl, *.markers) into  
+## standard input files (*.inp, *.hap) for REHH2.0 R package.  
+## It is invoked from Bash command line as `./beagle2rehh [prefix]`, 
+## where `prefix` stays for basename of bgl/markers filenames.
+## It is assumed that files contain data for one chromosome.
+## Since REHH2.0 functions don't allow the markers duplicated by the position, 
+## script checks and removes such duplicates. 
+## Author: Gennady Khvorykh, http://inZilico.com
+
+require(data.table, quietly = T)
+
+# Define usage() function
+usage <- function(){
+  cat("\nUsage: ./beagle2rehh prefix")
+  cat("\nprefix - prefix of bgl/markers files")
+  cat("\n\n")
+}
+
+main <- function(){
+  
+  # Check input 
+  args <- commandArgs(trailingOnly = T)
+  if (is.na(args[1])) return(usage())
+  
+  # Initilize
+  pref <- args[1]
+  
+  # Load input
+  hap <- fread(paste0(pref, ".bgl"))
+  map <- fread(paste0(pref, ".markers"), col.names = c("id", "pos", "a1", "a2"))
+  
+  # Check the number of SNPs 
+  if (nrow(hap) != nrow(map)) stop(paste0("Different number of SNPs!\n", pref, ".bgl: ", nrow(hap), "\n", pref, ".markers: ", nrow(map))) 
+  
+  # Remove markers duplicated by position if there are any
+  dups <- duplicated(map[, pos])
+  hap <- hap[!dups, ]
+  map <- map[!dups, ]
+  message(sum(dups), " markers duplicated by position are removed.")
+  
+  # Subset columns with haplotypes 
+  hap <- hap[, -c(1, 2)]
+  
+  message("Number of haplotypes: ", ncol(hap))
+  message("Number of markers: ", map[, .N])
+  
+  # Add column with chromosome number
+  map[, chr := tstrsplit(map[, id], ":")[[1]]]
+  
+  # Order the columns
+  setcolorder(map, c("id", "chr", "pos", "a1", "a2"))
+  
+  # Save the map 
+  fwrite(map, paste0(pref, ".inp"), col.names = F, sep = " ", verbose = F)
+  
+  ## Produce *.hap file
+  # Convert {A, T, C, G, 0, 1} genotypes into {1, 2} according to map 
+  hap <- hap[, lapply(.SD, function(x) ifelse(x == map[, a1], 1, 2)
+  )]
+  
+  # Transpose
+  hap <- transpose(hap)
+  
+  # Add dummy column 
+  hap <- cbind(1:nrow(hap), hap)
+  
+  # Save hyplotypes converted as *.hap
+  fwrite(hap, paste0(pref, ".hap"), col.names = F, sep = " ", verbose = F)
+  
+}# End of main()
+
+main()
